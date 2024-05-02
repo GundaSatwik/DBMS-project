@@ -1,0 +1,97 @@
+CREATE TABLE Donor (
+    Donor_ID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Blood_Group VARCHAR(3),
+    Contact_Number VARCHAR(15),
+    Address VARCHAR(255),
+    Age INT,
+    Gender VARCHAR(10),
+    Last_Donation_Date DATE,
+    Medical_History TEXT
+);
+INSERT INTO Donor (Donor_ID, Name, Blood_Group, Contact_Number, Address, Age, Gender, Last_Donation_Date, Medical_History) 
+VALUES 
+(1, 'John Doe', 'O+', '1234567890', '123 Main St', 30, 'Male', '2023-01-15', 'No significant medical history'),
+(2, 'Jane Smith', 'A-', '9876543210', '456 Elm St', 25, 'Female', '2022-12-20', 'High blood pressure'),
+(3, 'Michael Johnson', 'B+', '5551234567', '789 Oak St', 35, 'Male', '2023-03-10', 'Allergic to penicillin');
+
+
+CREATE TABLE Recipient (
+    Recipient_ID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Blood_Group VARCHAR(3),
+    Contact_Number VARCHAR(15),
+    Address VARCHAR(255),
+    Age INT,
+    Gender VARCHAR(10),
+    Required_Blood_Units INT,
+    Hospital_Details VARCHAR(255)
+);
+INSERT INTO Recipient (Recipient_ID, Name, Blood_Group, Contact_Number, Address, Age, Gender, Required_Blood_Units, Hospital_Details) 
+VALUES 
+(1, 'Sarah Brown', 'AB+', '1112223333', '101 Pine St', 40, 'Female', 2, 'City Hospital'),
+(2, 'David Wilson', 'O-', '4445556666', '202 Cedar St', 55, 'Male', 3, 'Community Hospital'),
+(3, 'Emily Taylor', 'B-', '7778889999', '303 Maple St', 28, 'Female', 1, 'General Hospital');
+
+CREATE TABLE Blood_Bank (
+    Bank_ID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Location VARCHAR(255),
+    Contact_Number VARCHAR(15)
+);
+INSERT INTO Blood_Bank (Bank_ID, Name, Location, Contact_Number) 
+VALUES 
+(1, 'Red Cross Blood Bank', '123 Oak St', '9998887777'),
+(2, 'Community Blood Center', '456 Elm St', '5554443333'),
+(3, 'City Blood Bank', '789 Maple St', '2221110000');
+
+
+CREATE TABLE Blood_Donation (
+    Donation_ID INT PRIMARY KEY,
+    Donor_ID INT,
+    Recipient_ID INT,
+    Donation_Date DATE,
+    Blood_Group VARCHAR(3),
+    Quantity_Donated INT,
+    FOREIGN KEY (Donor_ID) REFERENCES Donor(Donor_ID),
+    FOREIGN KEY (Recipient_ID) REFERENCES Recipient(Recipient_ID)
+);
+INSERT INTO Blood_Donation (Donation_ID, Donor_ID, Recipient_ID, Donation_Date, Blood_Group, Quantity_Donated) 
+VALUES 
+(1, 1, 1, '2024-04-12', 'O+', 1),
+(2, 2, 2, '2024-04-11', 'A-', 2),
+(3, 3, 3, '2024-04-10', 'B+', 1);
+
+SELECT 
+    d.Donor_ID,
+    d.Name AS Donor_Name,
+    d.Blood_Group AS Donor_Blood_Group,
+    d.Contact_Number AS Donor_Contact_Number,
+    d.Address AS Donor_Address,
+    d.Age AS Donor_Age,
+    d.Gender AS Donor_Gender,
+    d.Last_Donation_Date AS Donor_Last_Donation_Date,
+    d.Medical_History AS Donor_Medical_History,
+    r.Recipient_ID,
+    r.Name AS Recipient_Name,
+    r.Blood_Group AS Recipient_Blood_Group,
+    r.Contact_Number AS Recipient_Contact_Number,
+    r.Address AS Recipient_Address,
+    r.Age AS Recipient_Age,
+    r.Gender AS Recipient_Gender,
+    r.Required_Blood_Units AS Required_Blood_Units,
+    r.Hospital_Details AS Hospital_Details,
+    bd.Blood_Group AS Donation_Blood_Group,
+    bd.Quantity_Donated AS Quantity_Donated,
+    bd.Donation_Date AS Donation_Date,
+    bb.Name AS Blood_Bank_Name,
+    bb.Location AS Blood_Bank_Location,
+    bb.Contact_Number AS Blood_Bank_Contact_Number
+FROM 
+    Donor d
+JOIN 
+    Blood_Donation bd ON d.Donor_ID = bd.Donor_ID
+JOIN 
+    Recipient r ON bd.Recipient_ID = r.Recipient_ID
+JOIN 
+    Blood_Bank bb ON d.Donor_ID = bb.Bank_ID;
